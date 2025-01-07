@@ -41,6 +41,17 @@
                                 <div class="form-text">Please upload a PDF file for validation</div>
                             </div>
 
+                            <!-- Simple Textbox -->
+                            <div class="mb-4">
+                                <label for="userText" class="form-label">Prompt</label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="userText" 
+                                       placeholder="Write something here..." 
+                                       value="Please Check the Po number" 
+                                       >
+                            </div>
+
                             <div class="d-grid gap-2">
                                 <button type="submit" 
                                         class="btn btn-primary btn-lg"
@@ -49,6 +60,7 @@
                                 </button>
                             </div>
                         </form>
+
                         <div id="resultSection" style="display: none;">
                             <div id="successAlert" style="display: none; color: green;"></div>
                             <div id="errorAlert" style="display: none; color: red;"></div>
@@ -94,34 +106,38 @@
     <script src="assets/js/main.js"></script>
 
     <script>
-        const API_ENDPOINT = 'https://emailresponse3.ew.r.appspot.com/xml-convertion/';
-    
+        const XML_CONVERSION_ENDPOINT = 'https://emailresponse3.ew.r.appspot.com/xml-convertion/';
+        const XML_VALIDATION_ENDPOINT = 'https://emailresponse3.ew.r.appspot.com/xml-validation';
+
         document.getElementById('conversionForm').addEventListener('submit', async function (e) {
             e.preventDefault();
-    
+
             const fileInput = document.getElementById('pdfFile');
+            const userText = document.getElementById('userText').value;
             const file = fileInput.files[0];
             const submitBtn = document.getElementById('submitBtn');
             const loadingSpinner = document.getElementById('loadingSpinner');
             const resultSection = document.getElementById('resultSection');
             const successAlert = document.getElementById('successAlert');
             const errorAlert = document.getElementById('errorAlert');
-    
+            const xmlContentContainer = document.getElementById('xmlContent');
+
             if (!file) {
                 showError('Please select a PDF file.');
                 return;
             }
-    
+
             // Show loading state
             submitBtn.disabled = true;
             loadingSpinner.style.display = 'block';
             resultSection.style.display = 'none';
-    
+
             try {
+                // First API call - XML Conversion
                 const formData = new FormData();
                 formData.append('file', file);
-    
-                const response = await fetch(API_ENDPOINT, {
+
+                const conversionResponse = await fetch(XML_CONVERSION_ENDPOINT, {
                     method: 'POST',
                     body: formData,
                     mode: 'cors',
@@ -130,40 +146,67 @@
                     },
                     credentials: 'omit'
                 });
-    
-                if (!response.ok) {
-                    const errorData = await response.text();
-                    throw new Error(`HTTP error! Status: ${response.status}. ${errorData}`);
+
+                if (!conversionResponse.ok) {
+                    const errorData = await conversionResponse.text();
+                    throw new Error(`Conversion Error! Status: ${conversionResponse.status}. ${errorData}`);
                 }
-    
-                const data = await response.json();
-    
+
+                const conversionData = await conversionResponse.json();
+
                 // Clear previous results
                 successAlert.textContent = '';
                 errorAlert.textContent = '';
-                const xmlContentContainer = document.getElementById('xmlContent');
                 xmlContentContainer.textContent = '';
-    
-                // Update the result section based on the response
-                if (data.is_xml) {
-                    successAlert.style.display = 'block';
-                    successAlert.textContent = 'XML found in the PDF!';
-                } else {
-                    successAlert.style.display = 'block';
-                    successAlert.textContent = 'XML generated successfully!';
+
+                if (!conversionData.xml_content) {
+                    throw new Error('No XML content found in the response');
                 }
-    
-                if (data.xml_content) {
-                    xmlContentContainer.textContent = data.xml_content;
-                    xmlContentContainer.style.display = 'block';
+
+                // Second API call - XML Validation
+                const validationResponse = await fetch(XML_VALIDATION_ENDPOINT, {
+                    method: 'POST',
+                    mode: 'cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json',
+                    },
+                    credentials: 'omit',
+                    body: JSON.stringify({
+                        prompt: userText,
+                        xml_content: conversionData.xml_content
+                    })
+                });
+
+                if (!validationResponse.ok) {
+                    const errorData = await validationResponse.text();
+                    throw new Error(`Validation Error! Status: ${validationResponse.status}. ${errorData}`);
                 }
-    
+
+                const validationData = await validationResponse.json();
+
+                // Display results
+                successAlert.style.display = 'block';
+                successAlert.innerHTML = `
+                    <div>
+                        <strong>XML ${conversionData.is_xml ? 'found' : 'generated'} successfully!</strong>
+                        <br><br>
+                        <strong>Analysis:</strong> ${validationData.analysis}
+                        <br><br>
+                        <strong>XML Content:</strong>
+                    </div>
+                `;
+
+                // Display XML content
+                xmlContentContainer.textContent = conversionData.xml_content;
+                xmlContentContainer.style.display = 'block';
+
                 errorAlert.style.display = 'none';
                 resultSection.style.display = 'block';
-    
+
                 // Clear the file input for next upload
                 fileInput.value = '';
-    
+
             } catch (error) {
                 console.error('Error:', error);
                 showError(`An error occurred: ${error.message}`);
@@ -173,19 +216,17 @@
                 loadingSpinner.style.display = 'none';
             }
         });
-    
+
         function showError(message) {
             const resultSection = document.getElementById('resultSection');
             const successAlert = document.getElementById('successAlert');
             const errorAlert = document.getElementById('errorAlert');
-    
+
             resultSection.style.display = 'block';
             successAlert.style.display = 'none';
             errorAlert.style.display = 'block';
             errorAlert.textContent = message;
         }
     </script>
-    
-
 </body>
-</html> 
+</html>
