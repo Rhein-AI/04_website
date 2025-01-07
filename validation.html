@@ -1,96 +1,191 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en"> 
 <head>
-    <meta charset="UTF-8">
+    <title>RheinAI - PDF Validation</title>
+    
+    <!-- Meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>XML Conversion API</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        #result {
-            margin-top: 20px;
-            padding: 10px;
-            border: 1px solid #ccc;
-            display: none;
-        }
-        #result.success {
-            border-color: green;
-        }
-        #result.error {
-            border-color: red;
-        }
-        .loading {
-            display: none;
-        }
-    </style>
-</head>
-<body>
-    <h1>XML Conversion API</h1>
-    <form id="uploadForm">
-        <label for="pdfFile">Upload PDF:</label>
-        <input type="file" id="pdfFile" name="file" accept=".pdf" required>
-        <button type="submit">Convert</button>
-    </form>
+    <meta name="description" content="RheinAI PDF Validation">
+    <meta name="author" content="Xiaoying Riley at 3rd Wave Media">    
+    <link rel="shortcut icon" href="favicon.ico"> 
+    
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:800|Roboto:400,500,700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome JS-->
+    <script defer src="assets/fontawesome/js/all.min.js"></script>
 
-    <div id="loading" class="loading">Processing...</div>
-    <div id="result"></div>
+    <!-- Theme CSS -->  
+    <link id="theme-style" rel="stylesheet" href="assets/css/theme.css">
+
+</head> 
+
+<body>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-12 col-md-8 col-lg-6">
+                <div class="card shadow-sm">
+                    <div class="card-body p-5">
+                        <h2 class="text-center mb-4">PDF Validation</h2>
+                        
+                        <form id="conversionForm">
+                            <div class="mb-4">
+                                <label for="pdfFile" class="form-label">Upload PDF Document</label>
+                                <input type="file" 
+                                       class="form-control" 
+                                       id="pdfFile" 
+                                       accept=".pdf"
+                                       required>
+                                <div class="form-text">Please upload a PDF file for validation</div>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" 
+                                        class="btn btn-primary btn-lg"
+                                        id="submitBtn">
+                                    Submit for Validation
+                                </button>
+                            </div>
+                        </form>
+                        <div id="resultSection" style="display: none;">
+                            <div id="successAlert" style="display: none; color: green;"></div>
+                            <div id="errorAlert" style="display: none; color: red;"></div>
+                            <pre id="xmlContent" style="display: none; border: 1px solid #ddd; padding: 10px; background-color: #f9f9f9;"></pre>
+                        </div>
+                        <!-- Loading spinner (hidden by default) -->
+                        <div id="loadingSpinner" class="text-center mt-4" style="display: none;">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-2">Processing your PDF...</p>
+                        </div>
+
+                        <!-- Result section (hidden by default) -->
+                        <div id="resultSection" class="mt-4" style="display: none;">
+                            <div id="successAlert" class="alert alert-success" style="display: none;">
+                                <h5 class="alert-heading">Validation Complete!</h5>
+                                <p id="successMessage"></p>
+                                <hr>
+                                <p class="mb-0">XML Content:</p>
+                                <pre id="xmlContent" class="mt-2" style="max-height: 200px; overflow-y: auto;"></pre>
+                            </div>
+                            <div id="errorAlert" class="alert alert-danger" style="display: none;">
+                                <h5 class="alert-heading">Error</h5>
+                                <p id="errorMessage"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mt-4">
+                    <a href="index.html" class="btn btn-ghost">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Home
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Javascript -->          
+    <script src="assets/plugins/popper.min.js"></script>
+    <script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>  
+    <script src="assets/js/main.js"></script>
 
     <script>
         const API_ENDPOINT = 'https://emailresponse3.ew.r.appspot.com/xml-convertion/';
-
-        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent the default form submission
-            
-            const pdfFile = document.getElementById('pdfFile').files[0];
-            const resultDiv = document.getElementById('result');
-            const loadingDiv = document.getElementById('loading');
-
-            if (!pdfFile) {
-                resultDiv.textContent = 'Please select a PDF file.';
-                resultDiv.className = 'error';
-                resultDiv.style.display = 'block';
+    
+        document.getElementById('conversionForm').addEventListener('submit', async function (e) {
+            e.preventDefault();
+    
+            const fileInput = document.getElementById('pdfFile');
+            const file = fileInput.files[0];
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const resultSection = document.getElementById('resultSection');
+            const successAlert = document.getElementById('successAlert');
+            const errorAlert = document.getElementById('errorAlert');
+    
+            if (!file) {
+                showError('Please select a PDF file.');
                 return;
             }
-
-            // Show loading indicator
-            loadingDiv.style.display = 'block';
-            resultDiv.style.display = 'none';
-
-            const formData = new FormData();
-            formData.append('file', pdfFile);
-
+    
+            // Show loading state
+            submitBtn.disabled = true;
+            loadingSpinner.style.display = 'block';
+            resultSection.style.display = 'none';
+    
             try {
+                const formData = new FormData();
+                formData.append('file', file);
+    
                 const response = await fetch(API_ENDPOINT, {
                     method: 'POST',
-                    body: formData
+                    body: formData,
+                    mode: 'cors',
+                    headers: {
+                        'Accept': 'application/json',
+                    },
+                    credentials: 'omit'
                 });
-
-                const result = await response.json();
-
-                if (response.ok) {
-                    resultDiv.textContent = result.is_xml 
-                        ? 'XML found in the PDF!' 
-                        : 'XML generated successfully!';
-                    if (result.xml_content) {
-                        const xmlPre = document.createElement('pre');
-                        xmlPre.textContent = result.xml_content;
-                        resultDiv.appendChild(xmlPre);
-                    }
-                    resultDiv.className = 'success';
-                } else {
-                    throw new Error(result.detail || 'An error occurred while processing the file.');
+    
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    throw new Error(`HTTP error! Status: ${response.status}. ${errorData}`);
                 }
+    
+                const data = await response.json();
+    
+                // Clear previous results
+                successAlert.textContent = '';
+                errorAlert.textContent = '';
+                const xmlContentContainer = document.getElementById('xmlContent');
+                xmlContentContainer.textContent = '';
+    
+                // Update the result section based on the response
+                if (data.is_xml) {
+                    successAlert.style.display = 'block';
+                    successAlert.textContent = 'XML found in the PDF!';
+                } else {
+                    successAlert.style.display = 'block';
+                    successAlert.textContent = 'XML generated successfully!';
+                }
+    
+                if (data.xml_content) {
+                    xmlContentContainer.textContent = data.xml_content;
+                    xmlContentContainer.style.display = 'block';
+                }
+    
+                errorAlert.style.display = 'none';
+                resultSection.style.display = 'block';
+    
+                // Clear the file input for next upload
+                fileInput.value = '';
+    
             } catch (error) {
-                resultDiv.textContent = `Error: ${error.message}`;
-                resultDiv.className = 'error';
+                console.error('Error:', error);
+                showError(`An error occurred: ${error.message}`);
             } finally {
-                // Hide loading indicator
-                loadingDiv.style.display = 'none';
-                resultDiv.style.display = 'block';
+                // Reset loading state
+                submitBtn.disabled = false;
+                loadingSpinner.style.display = 'none';
             }
         });
+    
+        function showError(message) {
+            const resultSection = document.getElementById('resultSection');
+            const successAlert = document.getElementById('successAlert');
+            const errorAlert = document.getElementById('errorAlert');
+    
+            resultSection.style.display = 'block';
+            successAlert.style.display = 'none';
+            errorAlert.style.display = 'block';
+            errorAlert.textContent = message;
+        }
     </script>
+    
+
 </body>
-</html>
+</html> 
