@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XML Conversion API</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            display: none;
+        }
+        #result.success {
+            border-color: green;
+        }
+        #result.error {
+            border-color: red;
+        }
+        .loading {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>XML Conversion API</h1>
+    <form id="uploadForm">
+        <label for="pdfFile">Upload PDF:</label>
+        <input type="file" id="pdfFile" name="file" accept=".pdf" required>
+        <button type="submit">Convert</button>
+    </form>
+
+    <div id="loading" class="loading">Processing...</div>
+    <div id="result"></div>
+
+    <script>
+        const API_ENDPOINT = 'https://emailresponse3.ew.r.appspot.com/xml-convertion/';
+
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent the default form submission
+            
+            const pdfFile = document.getElementById('pdfFile').files[0];
+            const resultDiv = document.getElementById('result');
+            const loadingDiv = document.getElementById('loading');
+
+            if (!pdfFile) {
+                resultDiv.textContent = 'Please select a PDF file.';
+                resultDiv.className = 'error';
+                resultDiv.style.display = 'block';
+                return;
+            }
+
+            // Show loading indicator
+            loadingDiv.style.display = 'block';
+            resultDiv.style.display = 'none';
+
+            const formData = new FormData();
+            formData.append('file', pdfFile);
+
+            try {
+                const response = await fetch(API_ENDPOINT, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    resultDiv.textContent = result.is_xml 
+                        ? 'XML found in the PDF!' 
+                        : 'XML generated successfully!';
+                    if (result.xml_content) {
+                        const xmlPre = document.createElement('pre');
+                        xmlPre.textContent = result.xml_content;
+                        resultDiv.appendChild(xmlPre);
+                    }
+                    resultDiv.className = 'success';
+                } else {
+                    throw new Error(result.detail || 'An error occurred while processing the file.');
+                }
+            } catch (error) {
+                resultDiv.textContent = `Error: ${error.message}`;
+                resultDiv.className = 'error';
+            } finally {
+                // Hide loading indicator
+                loadingDiv.style.display = 'none';
+                resultDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>
