@@ -102,6 +102,88 @@
             padding: 0.5em 1em;
             margin: 0.25rem;
         }
+
+        .language-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 65px;
+            height: 32px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ffffff;
+            border: 2px solid #FF0000;
+            transition: .4s;
+            border-radius: 34px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 4px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 24px;
+            width: 24px;
+            left: 2px;
+            bottom: 2px;
+            background-color: #FF0000;
+            transition: .4s;
+            border-radius: 50%;
+            z-index: 2;
+        }
+
+        .toggle-text {
+            color: #000000;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 1;
+            transition: .4s;
+        }
+
+        .toggle-text-de {
+            padding-left: 4px;
+        }
+
+        .toggle-text-en {
+            padding-right: 4px;
+        }
+
+        input:checked + .toggle-slider:before {
+            transform: translateX(33px);
+        }
+
+        input:checked + .toggle-slider {
+            background-color: #ffffff;
+        }
+
+        .toggle-switch:hover .toggle-slider {
+            box-shadow: 0 0 5px rgb(240, 1, 1);
+        }
+
+        .lang-de, .lang-en {
+            transition: opacity 0.3s ease;
+        }
     </style>
 
 </head> 
@@ -109,6 +191,17 @@
 <body>    
 
 	<header class="header">
+		<!-- Replace the existing language-toggle div with this -->
+		<div class="language-toggle position-absolute">
+			<label class="toggle-switch">
+				<input type="checkbox" id="langToggle" onclick="toggleLanguage()">
+				<span class="toggle-slider">
+					<span class="toggle-text toggle-text-de">DE</span>
+					<span class="toggle-text toggle-text-en">EN</span>
+				</span>
+			</label>
+		</div>
+		
 		<section class="hero-section">
 			<video autoplay muted loop playsinline class="hero-video">
 				<source src="assets/videos/background.mp4" type="video/mp4">
@@ -117,34 +210,42 @@
 			</div><!--//hero-mask-->
 			<div class="container text-center py-5">
 				<div class="single-col-max mx-auto">
-					<div class="hero-heading-upper pt-3 mb-3">FinTech AI Services<br class="d-md-none"></div>
+					<!-- Add language-specific content with data attributes -->
+					<div class="hero-heading-upper pt-3 mb-3">
+						<span class="lang-de">FinTech KI-Dienste</span>
+						<span class="lang-en" style="display: none;">FinTech AI Services</span>
+					</div>
 					<h1 class="hero-heading mb-5">
-						<span class="brand mb-4 d-block"><span class="text-highlight">{</span><span class="name">RHEIN-AI</span><span class="text-highlight pl-2">}</span></span>
-					    <span class="desc d-block">E-invoice Toolkit</span>
-				    </h1>
+						<span class="brand mb-4 d-block">
+							<span class="text-highlight">{</span>
+							<span class="name">RHEIN-AI</span>
+							<span class="text-highlight pl-2">}</span>
+						</span>
+						<span class="desc d-block">
+							<span class="lang-de">E-Rechnungs-Toolkit</span>
+							<span class="lang-en" style="display: none;">E-invoice Toolkit</span>
+						</span>
+					</h1>
 					<div class="text-center mb-5">
-						<a href="#section-contact" class="btn btn-primary btn-lg scrollto">any pdf to e-invoice</a>
+						<a href="#section-contact" class="btn btn-primary btn-lg scrollto">
+							<span class="lang-de">PDF zu E-Rechnung</span>
+							<span class="lang-en" style="display: none;">any pdf to e-invoice</span>
+						</a>
 					</div>
 					
 					<div class="hero-summary">
 						<div class="row">
 							<div class="item col-4">
-								<!--<div class="summary-heading"></i>Zugferd</div>-->
 								<h4 class="summary-desc mb-1"><span class="desc">Zugferd</span></h4>
-								
-							</div><!--//col-->
+							</div>
 							<div class="item col-4">
-								<!--<div class="summary-heading"></i>Factur-x</div>-->
 								<h4 class="summary-desc mb-1"><span class="desc">Factur-x</span></h4>
-								
-							</div><!--//col-->
+							</div>
 							<div class="item col-4">
-								<!--<div class="summary-heading"></i>X-Rechnung</div>-->
 								<h4 class="summary-desc mb-1">X-Rechnung</h4>
-								
-							</div><!--//col-->
-						</div><!--//row-->
-					</div><!--//hero-summary-->
+							</div>
+						</div>
+					</div>
 				</div><!--//single-col-max-->
 			</div><!--//container-->
 			
@@ -907,8 +1008,14 @@
             <h4 class="title mb-3"><a href="#">Free Online Tools & SaaS</a></h4>
             <div class="summary mb-3">
                 <div class="feature-section">
-                    <h6 class="feature-heading">Main Feature:</h6>
-                    <p class="feature-text">Instantly convert regular text-based invoices into ZUGFeRD / Factur-X compliant formats.</p>
+                    <h6 class="feature-heading">
+                        <span class="lang-de">Hauptfunktion:</span>
+                        <span class="lang-en" style="display: none;">Main Feature:</span>
+                    </h6>
+                    <p class="feature-text">
+                        <span class="lang-de">Sofortige Umwandlung von textbasierten Rechnungen in ZUGFeRD / Factur-X-konforme Formate.</span>
+                        <span class="lang-en" style="display: none;">Instantly convert regular text-based invoices into ZUGFeRD / Factur-X compliant formats.</span>
+                    </p>
                 
                     <h6 class="feature-heading">Accessible to All:</h6>
                     <p class="feature-text">Simple, user-friendly tools for non-technical users.</p>
@@ -1047,6 +1154,44 @@
 	<script src="assets/plugins/popper.min.js"></script>      
 	<script src="assets/plugins/bootstrap/js/bootstrap.min.js"></script>  
 	<script src="assets/js/main.js"></script>  
+
+	<script>
+		let currentLang = 'de'; // Default language is German
+		
+		function toggleLanguage() {
+			const newLang = currentLang === 'de' ? 'en' : 'de';
+			const checkbox = document.getElementById('langToggle');
+			
+			// Hide all elements of current language
+			document.querySelectorAll(`.lang-${currentLang}`).forEach(el => {
+				el.style.display = 'none';
+			});
+			
+			// Show all elements of new language
+			document.querySelectorAll(`.lang-${newLang}`).forEach(el => {
+				el.style.display = 'inline-block';
+			});
+			
+			currentLang = newLang;
+			
+			// Ensure checkbox state matches language
+			checkbox.checked = currentLang === 'en';
+		}
+		
+		// Initialize language on page load
+		document.addEventListener('DOMContentLoaded', () => {
+			const checkbox = document.getElementById('langToggle');
+			checkbox.checked = false; // Start with German (unchecked)
+			
+			// Show German content by default
+			document.querySelectorAll('.lang-de').forEach(el => {
+				el.style.display = 'inline-block';
+			});
+			document.querySelectorAll('.lang-en').forEach(el => {
+				el.style.display = 'none';
+			});
+		});
+	</script>
 
 </body>
 </html> 
