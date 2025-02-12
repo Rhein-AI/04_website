@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <title>Datenschutz - Rhein AI</title>
     <link rel="stylesheet" href="assets/plugins/fontawesome/css/all.min.css">
     <link rel="stylesheet" href="assets/css/bootstrap.min.css">
@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         /* Base styles */
+        body {
+            overflow-x: hidden;
+        }
+
         .content-area {
             overflow-wrap: break-word;
             word-wrap: break-word;
@@ -63,23 +67,11 @@
             .container-inner {
                 padding: 2rem;
             }
-
-            .content-area {
-                padding: 1.5rem;
-            }
-
-            .section-title {
-                font-size: 2rem;
-            }
         }
 
         @media (max-width: 768px) {
             .container-inner {
                 padding: 1.5rem;
-            }
-
-            .content-area {
-                padding: 1.25rem;
             }
 
             .section-title {
