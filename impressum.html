@@ -9,39 +9,96 @@
     <link rel="stylesheet" href="assets/css/theme.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        @media (max-width: 768px) {
+        /* Base styles */
+        .content-area {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            padding: 2rem;
+        }
+
+        .container-inner {
+            max-width: 100%;
+            padding: 3rem;
+        }
+
+        /* Responsive typography */
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .theme-text-primary.h4 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        /* Button styling */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+
+        /* Responsive breakpoints */
+        @media (max-width: 992px) {
             .container-inner {
-                padding: 1.5rem !important;
+                padding: 2rem;
             }
-            
+
             .content-area {
-                padding: 1rem !important;
+                padding: 1.5rem;
             }
 
             .section-title {
                 font-size: 2rem;
-                margin-bottom: 1.5rem !important;
             }
         }
-        
+
+        @media (max-width: 768px) {
+            .container-inner {
+                padding: 1.5rem;
+            }
+
+            .content-area {
+                padding: 1.25rem;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .theme-text-primary.h4 {
+                font-size: 1.25rem;
+                margin-top: 1.5rem;
+            }
+        }
+
         @media (max-width: 576px) {
             .container-inner {
-                padding: 0.75rem !important;
+                padding: 1rem;
                 margin: 0.5rem;
             }
-            
+
             .content-area {
-                padding: 0.75rem !important;
+                padding: 1rem;
             }
-            
+
             .section-title {
                 font-size: 1.5rem;
-                margin-bottom: 1rem !important;
+                margin-bottom: 1rem;
             }
-            
+
             .theme-text-primary.h4 {
                 font-size: 1.1rem;
-                margin-bottom: 0.5rem !important;
+                margin-top: 1.25rem;
+                margin-bottom: 0.75rem;
             }
 
             p {
@@ -56,13 +113,13 @@
             }
         }
 
-        .content-area {
-            overflow-wrap: break-word;
-            word-wrap: break-word;
+        /* Additional spacing improvements */
+        .content-area > p:last-of-type {
+            margin-bottom: 2rem;
         }
 
-        .container-inner {
-            max-width: 100%;
+        .theme-text-primary.h4:first-of-type {
+            margin-top: 0;
         }
     </style>
 </head>

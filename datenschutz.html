@@ -9,88 +9,133 @@
     <link rel="stylesheet" href="assets/css/theme.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
-        @media (max-width: 768px) {
+        /* Base styles */
+        .content-area {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            padding: 2rem;
+        }
+
+        .container-inner {
+            max-width: 100%;
+            padding: 3rem;
+        }
+
+        /* Responsive typography */
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .theme-text-primary.h4 {
+            font-size: 1.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .h5 {
+            font-size: 1.25rem;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        p, li {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        /* Spacing */
+        ul {
+            padding-left: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Button styling */
+        .btn {
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+        }
+
+        /* Responsive breakpoints */
+        @media (max-width: 992px) {
             .container-inner {
-                padding: 1.5rem !important;
+                padding: 2rem;
             }
-            
+
             .content-area {
-                padding: 1rem !important;
+                padding: 1.5rem;
             }
 
             .section-title {
                 font-size: 2rem;
-                margin-bottom: 1.5rem !important;
             }
         }
-        
-        @media (max-width: 576px) {
+
+        @media (max-width: 768px) {
             .container-inner {
-                padding: 0.75rem !important;
-                margin: 0.5rem;
-            }
-            
-            .content-area {
-                padding: 0.75rem !important;
-            }
-            
-            .section-title {
-                font-size: 1.5rem;
-                margin-bottom: 1rem !important;
-            }
-            
-            .theme-text-primary.h4 {
-                font-size: 1.1rem;
-                margin-bottom: 0.5rem !important;
+                padding: 1.5rem;
             }
 
-            p {
+            .content-area {
+                padding: 1.25rem;
+            }
+
+            .section-title {
+                font-size: 1.75rem;
+                margin-bottom: 1.5rem;
+            }
+
+            .theme-text-primary.h4 {
+                font-size: 1.25rem;
+            }
+
+            .h5 {
+                font-size: 1.1rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .container-inner {
+                padding: 1rem;
+                margin: 0.5rem;
+            }
+
+            .content-area {
+                padding: 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+                margin-bottom: 1rem;
+            }
+
+            .theme-text-primary.h4 {
+                font-size: 1.1rem;
+                margin-top: 1.5rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .h5 {
+                font-size: 1rem;
+                margin-top: 1rem;
+            }
+
+            p, li {
                 font-size: 0.9rem;
                 line-height: 1.4;
                 margin-bottom: 0.75rem;
+            }
+
+            ul {
+                padding-left: 1.25rem;
+                margin-bottom: 1rem;
             }
 
             .btn {
                 padding: 0.5rem 1rem;
                 font-size: 0.9rem;
             }
-
-            /* Additional styles for datenschutz.html */
-            .h5 {
-                font-size: 1rem;
-                margin-top: 1rem;
-            }
-
-            ul {
-                padding-left: 1.25rem;
-                margin-bottom: 0.75rem;
-            }
-
-            li {
-                font-size: 0.9rem;
-                line-height: 1.4;
-                margin-bottom: 0.25rem;
-            }
-        }
-
-        /* General responsive improvements */
-        .content-area {
-            overflow-wrap: break-word;
-            word-wrap: break-word;
-        }
-
-        .container-inner {
-            max-width: 100%;
-        }
-
-        /* Additional styles for better readability */
-        ul {
-            margin-top: 0.5rem;
-        }
-
-        strong {
-            display: inline-block;
-            margin-bottom: 0.25rem;
         }
     </style>
 </head>
