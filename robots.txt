@@ -1,1 +1,3 @@
 Disallow: /index-old.html
+
+Sitemap: https://fintom8.com/sitemap.xml
